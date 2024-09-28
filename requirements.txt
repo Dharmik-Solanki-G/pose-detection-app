@@ -1,6 +1,6 @@
 streamlit==1.31.0
 opencv-python==4.6.0.66
-mediapipe==0.10.11  # Use this version if 0.10.9 causes issues
+mediapipe==0.10.10  # Downgrade to a compatible version
 numpy==1.24.4
 pandas==2.0.3
 Pillow==10.0.0
