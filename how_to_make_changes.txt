@@ -1,3 +1,5 @@
+cd "C:\Users\HOme\Desktop\internship\angle streamlit app"
+
 git add .
 git commit -m "Your commit message"
 git push
