@@ -1,9 +1,8 @@
 import socketio
-import json
-from flask import Flask, render_template
+from flask import Flask, send_from_directory, render_template
 
 # Create a Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='public', static_url_path='')
 
 # Create a Socket.IO server
 sio = socketio.Server(cors_allowed_origins="*")
@@ -11,10 +10,15 @@ app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
 from parvatasana import detect_parvatasana
 
-# Flask route to serve the HTML (if needed)
+# Flask route to serve the HTML file
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return app.send_static_file('index.html')
+
+# Route to serve static files from the public directory
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('public', filename)
 
 # Socket.IO event handler
 @sio.event
