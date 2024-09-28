@@ -174,8 +174,6 @@ def process_video(video_source, ideal_angles, is_webcam=False):
     else:
         st.write(f"Real-time pose feedback: Correct: {correct_poses} / {total_frames} frames.")
 
-# --- Streamlit Web App Interface ---
-
 st.title("Pose Detection Web App")
 
 # Step 1: CSV File Selection (For Ideal Angles)
