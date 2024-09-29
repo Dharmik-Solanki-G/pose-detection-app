@@ -1,3 +1,26 @@
+import sys
+import subprocess
+import pkg_resources
+
+required_packages = [
+    'streamlit==1.31.0',
+    'opencv-python==4.8.0.76',
+    'mediapipe==0.10.11',
+    'numpy==1.24.3',
+    'pandas==2.0.3',
+    'Pillow==10.0.0',
+]
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+for package in required_packages:
+    try:
+        pkg_resources.require(package)
+    except pkg_resources.DistributionNotFound:
+        print(f"{package} not found. Installing...")
+        install(package)
+
 import cv2
 import mediapipe as mp
 import numpy as np
