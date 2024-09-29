@@ -1,7 +1,7 @@
 streamlit==1.31.0
 opencv-python==4.8.0.76
-mediapipe==0.10.13  # Updated to a compatible version
-numpy==1.23.5       # Updated to meet opencv dependency
+mediapipe==0.10.15
+numpy==1.22.4  # Use this version for compatibility
 pandas==2.0.3
 Pillow==10.0.0
 setuptools==68.0.0
