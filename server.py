@@ -8,7 +8,7 @@ app = Flask(__name__, static_folder='public', static_url_path='')
 sio = socketio.Server(cors_allowed_origins="*")
 app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
-from parvatasana import detect_parvatasana
+from poses.parvatasana import detect_parvatasana
 
 # Flask route to serve the HTML file
 @app.route('/')
@@ -32,7 +32,7 @@ def disconnect(sid):
 @sio.event
 def poseData(sid, data):
     instruction = data.get('instructions', None)
-    landmarks = data.get('landmarks', None)
+    landmarks = data.get('pose_landmarks', None)
     height = data.get('height', None)
     width = data.get('width', None)
 

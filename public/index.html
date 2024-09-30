@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
         crossorigin="anonymous"></script>
@@ -15,16 +16,6 @@
         crossorigin="anonymous"></script>
     <title>Pose Detection</title>
     <style>
-        .video-container {
-            position: relative;
-        }
-
-        video,
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
     </style>
 </head>
 
@@ -32,63 +23,17 @@
     <div class="video-container">
         <video class="local-video" autoplay playsinline></video>
         <canvas id="local-canva"></canvas>
+        <canvas id="feedback-canva"></canvas>
     </div>
-    <script type="module">
-        import PoseDetection from './poseDetection.js';
+    <!-- Dropdown for selecting Aasana -->
+    <div style="margin: 20px;">
+        <label for="asana-select">Select Aasana:</label>
+        <select id="asana-select">
+            <option value="parvatasana">Parvatasana (Mountain Pose)</option>
+        </select>
+    </div>
 
-        // Connect to the WebSocket server
-        const socket = io('http://localhost:5000'); // Make sure to match your server address
-
-        // Function to start the webcam
-        async function setupWebcam() {
-            const video = document.querySelector('.local-video');
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true
-            });
-            video.srcObject = stream;
-            return stream;
-        }
-
-        async function startPoseDetection() {
-            // Get webcam stream
-            const stream = await setupWebcam();
-
-            // Create PoseDetection instance and start detection
-            const poseDetection = new PoseDetection(stream);
-            let poseResult;  // Variable to hold the latest pose result
-
-            // Set a callback function to process the results
-            poseDetection.setResultCallback((result, canvasWidth, canvasHeight) => {
-                poseResult = result; // Store the latest pose result
-            });
-
-            // Send pose data every 1 second
-            setInterval(() => {
-                if (poseResult) {
-                    // Emit the latest pose data to the WebSocket server
-                    socket.emit('poseData', poseResult);
-                }
-            }, 1000); // 1000 milliseconds = 1 second
-
-            socket.on('poseFeedback', (data) => { handleDetection(data); });
-
-
-            async function handleDetection(data) {
-                const { accuracy, correct, correct2 } = data;
-
-                poseDetection.setCorrectPoints(correct, correct2);
-            }
-
-            // Initialize and start the detection
-            await poseDetection.init();
-        }
-
-
-        // Start the pose detection once the page loads
-        window.onload = () => {
-            startPoseDetection();
-        };
-    </script>
+    <script type="module" src="/app.js"></script>
 </body>
 
 </html>

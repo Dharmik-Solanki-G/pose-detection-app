@@ -1,0 +1,123 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif; /* Font for better visibility */
+    background-color: #f0f0f0; /* Light grey background */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Video Container */
+.video-container {
+    position: relative; /* Position relative for absolute positioning of children */
+    width: 80%;
+    max-width: 800px;
+    border: 2px solid #6200ea; /* Purple border */
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: white; /* White background */
+}
+
+/* Video Element */
+.local-video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Local Canvas Element */
+#local-canva {
+    position: absolute; /* Position absolute to overlay on video */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width to match video */
+    height: 100%; /* Full height to match video */
+    pointer-events: none; /* Disable interaction with the canvas */
+    z-index: 10; /* Lower z-index to ensure it’s behind the feedback canvas */
+}
+
+/* Feedback Canvas */
+#feedback-canva {
+    position: absolute; /* Keep it absolute to overlay */
+    top: 20px; /* Adjust to provide some padding from the top */
+    left: 20px; /* Adjust to position it on the left side */
+    width: 200px; /* Set a fixed width for the feedback display */
+    height: 100px; /* Set a fixed height */
+    pointer-events: none; /* Ensure no interactions go to the feedback canvas */
+    z-index: 20; /* Higher z-index to ensure it overlays the local canvas */
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly less transparent background for visibility */
+    border: 2px solid #6200ea; /* Purple border for emphasis */
+    border-radius: 8px; /* Slightly rounded corners */
+    display: flex; /* Center content */
+    flex-direction: column; /* Stack content vertically */
+    padding: 10px; /* Padding for better spacing */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+}
+
+/* Feedback Text Styles */
+.feedback-text {
+    font-size: 18px; /* Larger font for better readability */
+    color: #333; /* Dark color for text */
+    margin: 5px 0; /* Margin for spacing between lines */
+    text-align: center; /* Center text */
+}
+
+/* Accuracy Indicator */
+.accuracy {
+    font-size: 22px; /* Larger font for accuracy */
+    font-weight: bold; /* Bold for emphasis */
+    color: #6200ea; /* Purple color for consistency */
+}
+
+/* Dropdown Styles */
+.dropdown-container {
+    margin: 20px;
+    background-color: white; /* Ensure dropdown is on a light background */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Select Element */
+select {
+    padding: 10px;
+    border: 1px solid #6200ea; /* Purple border */
+    border-radius: 5px;
+    background-color: #fff; /* White background */
+    font-size: 16px;
+    transition: border-color 0.3s;
+    width: 100%; /* Full width for better usability */
+}
+
+select:focus {
+    border-color: #3700b3; /* Darker purple on focus */
+    outline: none; /* Remove default outline */
+}
+
+/* Label Styles */
+label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .video-container {
+        width: 95%; /* Wider on small screens */
+    }
+
+    label {
+        font-size: 16px;
+    }
+
+    select {
+        font-size: 14px;
+    }
+}
