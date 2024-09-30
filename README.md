@@ -1,5 +1,5 @@
 
-# Pose Detection Web App
+# Pose Detection Web App 
 
 ## Overview
 This project is a web application for detecting human poses in real-time using webcam input or uploaded video files. It utilizes the MediaPipe library for pose estimation and OpenCV for image processing. The app provides visual feedback on the correctness of poses, including facing direction, accuracy percentage, and specific feedback on angles.
