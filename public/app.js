@@ -24,15 +24,14 @@ async function startPoseDetection() {
     // Set a callback function to process the results
     poseDetection.setResultCallback((result, canvasWidth, canvasHeight) => {
         poseResult = result; // Store the latest pose result
-    });
-
-    // Send pose data every 1 second
-    setInterval(() => {
         if (poseResult) {
             // Emit the latest pose data to the WebSocket server
-            socket.emit('poseData', { pose_landmarks: poseResult.landmarks });
+            socket.emit('poseData', { pose_landmarks: poseResult.landmarks , instructions });
         }
-    }, 1000); // 1000 milliseconds = 1 second
+    });
+
+    // Capture the instruction (e.g., "parvatasana")
+    const instructions = document.getElementById('asana-select').value;
 
     socket.on('poseFeedback', (data) => { handleDetection(data); });
 
@@ -68,7 +67,32 @@ async function startPoseDetection() {
         // Set a different style for the feedback text
         ctx.font = '16px Arial'; // Regular font for feedback
         ctx.fillStyle = '#6200ea'; // Purple color for feedback
-        ctx.fillText(`Feedback: ${feedback}`, 10, 60); // Adjusted padding
+
+        // Wrap text to prevent it from overflowing
+        const maxWidth = canvas.width - 20; // Allow some padding from edges
+        const lineHeight = 20; // Height of each line of text
+        const words = feedback.split(' '); // Split feedback into words
+        let line = ''; // Initialize an empty line
+        let y = 60; // Starting Y position for feedback text
+
+        words.forEach((word) => {
+            const testLine = line + word + ' '; // Create a test line with the new word
+            const metrics = ctx.measureText(testLine); // Measure the width of the test line
+
+            // If the width exceeds the maximum width, draw the current line and reset
+            if (metrics.width > maxWidth) {
+                ctx.fillText(line, 10, y); // Draw the current line
+                line = word + ' '; // Reset line to the current word
+                y += lineHeight; // Move down for the next line
+            } else {
+                line = testLine; // Update line to the test line
+            }
+        });
+
+        // Draw any remaining text in the line
+        if (line) {
+            ctx.fillText(line, 10, y);
+        }
     }
 
     // Initialize and start the detection
