@@ -1,9 +1,5 @@
-import mediapipe as mp
 import numpy as np
 from .utils import calculate_angle, calculate_distance
-
-# Initialize MediaPipe Pose
-mp_pose = mp.solutions.pose
 
 # Define reference landmarks for Vrksasana (Tree Pose)
 reference_pose = {
@@ -18,45 +14,59 @@ reference_pose = {
 
 def calculate_arm_angle(landmarks, side):
     if side == "left":
-        shoulder = landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y
-        elbow = landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_ELBOW].y
-        wrist = landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].y
+        shoulder = landmarks["left_shoulder"]
+        elbow = landmarks["left_elbow"]
+        wrist = landmarks["left_wrist"]
     else:
-        shoulder = landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y
-        elbow = landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].y
-        wrist = landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y
+        shoulder = landmarks["right_shoulder"]
+        elbow = landmarks["right_elbow"]
+        wrist = landmarks["right_wrist"]
     
     return calculate_angle(shoulder, elbow, wrist)
+
 def detect_pose(landmarks):
     try:
         if landmarks:
             detected_pose = {
-                "left_wrist": [landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].y],
-                "right_wrist": [landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y],
-                "left_shoulder": [landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y],
-                "right_shoulder": [landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y],
-                "left_hip": [landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].y],
-                "right_hip": [landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].y],
-                "left_foot": [landmarks.landmark[mp_pose.PoseLandmark.LEFT_FOOT_INDEX].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_FOOT_INDEX].y],
-                "right_foot": [landmarks.landmark[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX].y],
-                "left_knee": [landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].x, landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE].y],
-                "right_knee": [landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].x, landmarks.landmark[mp_pose.PoseLandmark.RIGHT_KNEE].y],
+                "nose": np.array([landmarks[0]['x'], landmarks[0]['y']]),
+                "left_eye_inner": np.array([landmarks[1]['x'], landmarks[1]['y']]),
+                "left_eye": np.array([landmarks[2]['x'], landmarks[2]['y']]),
+                "left_eye_outer": np.array([landmarks[3]['x'], landmarks[3]['y']]),
+                "right_eye_inner": np.array([landmarks[4]['x'], landmarks[4]['y']]),
+                "right_eye": np.array([landmarks[5]['x'], landmarks[5]['y']]),
+                "right_eye_outer": np.array([landmarks[6]['x'], landmarks[6]['y']]),
+                "left_ear": np.array([landmarks[7]['x'], landmarks[7]['y']]),
+                "right_ear": np.array([landmarks[8]['x'], landmarks[8]['y']]),
+                "mouth_left": np.array([landmarks[9]['x'], landmarks[9]['y']]),
+                "mouth_right": np.array([landmarks[10]['x'], landmarks[10]['y']]),
+                "left_shoulder": np.array([landmarks[11]['x'], landmarks[11]['y']]),
+                "right_shoulder": np.array([landmarks[12]['x'], landmarks[12]['y']]),
+                "left_elbow": np.array([landmarks[13]['x'], landmarks[13]['y']]),
+                "right_elbow": np.array([landmarks[14]['x'], landmarks[14]['y']]),
+                "left_wrist": np.array([landmarks[15]['x'], landmarks[15]['y']]),
+                "right_wrist": np.array([landmarks[16]['x'], landmarks[16]['y']]),
+                "left_hip": np.array([landmarks[23]['x'], landmarks[23]['y']]),
+                "right_hip": np.array([landmarks[24]['x'], landmarks[24]['y']]),
+                "left_knee": np.array([landmarks[25]['x'], landmarks[25]['y']]),
+                "right_knee": np.array([landmarks[26]['x'], landmarks[26]['y']]),
+                "left_ankle": np.array([landmarks[27]['x'], landmarks[27]['y']]),
+                "right_ankle": np.array([landmarks[28]['x'], landmarks[28]['y']]),
             }
 
             # Set all landmarks as correct initially
-            correct = [1] * len(landmarks.landmark)
+            correct = [1] * len(detected_pose)
             feedback = []
 
             left_wrist = detected_pose["left_wrist"]
             right_wrist = detected_pose["right_wrist"]
-            hand_touch = np.linalg.norm(np.array(left_wrist) - np.array(right_wrist)) < calculate_distance(detected_pose["left_hip"], detected_pose["right_hip"]) / 1.2
+            hand_touch = np.linalg.norm(left_wrist - right_wrist) < calculate_distance(detected_pose["left_hip"], detected_pose["right_hip"]) / 1.2
 
             left_knee_index = detected_pose["left_knee"]
-            right_foot_index = detected_pose["right_foot"]
+            right_foot_index = detected_pose["right_ankle"]
             right_foot_knee_not_touch = calculate_distance(left_knee_index, right_foot_index) > calculate_distance(detected_pose["left_hip"], detected_pose["right_hip"]) * 2.5
 
             right_knee_index = detected_pose["right_knee"]
-            left_foot_index = detected_pose["left_foot"]
+            left_foot_index = detected_pose["left_ankle"]
             left_foot_knee_not_touch = calculate_distance(right_knee_index, left_foot_index) > calculate_distance(detected_pose["left_hip"], detected_pose["right_hip"]) * 2.5
 
             # Calculate similarity score and mark incorrect landmarks
@@ -64,30 +74,30 @@ def detect_pose(landmarks):
             for key in reference_pose.keys():
                 detected_point = detected_pose.get(key)
                 ref_point = reference_pose[key]
-                distance = np.linalg.norm(np.array(detected_point) - ref_point)
+                distance = np.linalg.norm(detected_point - ref_point)
                 total_distance += distance
 
-                if landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER].y < landmarks.landmark[mp_pose.PoseLandmark.LEFT_WRIST].y:
-                    correct[mp_pose.PoseLandmark.LEFT_SHOULDER.value] = 0
+                if detected_pose["left_shoulder"][1] < detected_pose["left_wrist"][1]:
+                    correct[11] = 0  # Index for LEFT_SHOULDER
                     feedback.append("Left shoulder too low")
 
-                if landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER].y < landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y:
-                    correct[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] = 0
+                if detected_pose["right_shoulder"][1] < detected_pose["right_wrist"][1]:
+                    correct[12] = 0  # Index for RIGHT_SHOULDER
                     feedback.append("Right shoulder too low")
 
-            angle_left_hand = calculate_arm_angle(landmarks, "left")
-            angle_right_hand = calculate_arm_angle(landmarks, "right")
+            angle_left_hand = calculate_arm_angle(detected_pose, "left")
+            angle_right_hand = calculate_arm_angle(detected_pose, "right")
 
             # If hands are not touching or angles are not correct, mark hand landmarks as incorrect
             if not hand_touch or angle_left_hand < 160 or angle_right_hand < 160:
-                correct[mp_pose.PoseLandmark.LEFT_WRIST.value] = 0
-                correct[mp_pose.PoseLandmark.RIGHT_WRIST.value] = 0
+                correct[15] = 0  # Index for LEFT_WRIST
+                correct[16] = 0  # Index for RIGHT_WRIST
                 feedback.append("Hands not touching or angles incorrect")
 
             # If feet or knees are not correctly positioned, update the feedback
             if not right_foot_knee_not_touch or not left_foot_knee_not_touch:
-                correct[mp_pose.PoseLandmark.RIGHT_HIP.value] = 1
-                correct[mp_pose.PoseLandmark.LEFT_HIP.value] = 1
+                correct[23] = 1  # Index for RIGHT_HIP
+                correct[24] = 1  # Index for LEFT_HIP
 
             accuracy = (sum(correct) / len(correct)) * 100
             pose_name = "Vrksasana" if accuracy > 80 else "None"
@@ -99,4 +109,4 @@ def detect_pose(landmarks):
 
     except Exception as e:
         print(f"Error during pose detection: {e}")
-        return None, 0.0, [0] * len(landmarks.landmark), "Error"
+        return None, 0.0, [0] * len(detected_pose), "Error"

@@ -1,9 +1,5 @@
 from .utils import calculate_angle, calculate_distance
-import mediapipe as mp
 import numpy as np
-
-# Initialize MediaPipe Pose.
-mp_pose = mp.solutions.pose
 
 # Define reference landmarks for Setubandasana
 reference_pose = {
@@ -23,41 +19,68 @@ def detect_pose(landmarks):
     try:
         if landmarks:
 
+            # Define the detected landmarks for Setubandasana
+            detected_pose = {
+                "nose": np.array([landmarks[0]['x'], landmarks[0]['y']]),
+                "left_eye_inner": np.array([landmarks[1]['x'], landmarks[1]['y']]),
+                "left_eye": np.array([landmarks[2]['x'], landmarks[2]['y']]),
+                "left_eye_outer": np.array([landmarks[3]['x'], landmarks[3]['y']]),
+                "right_eye_inner": np.array([landmarks[4]['x'], landmarks[4]['y']]),
+                "right_eye": np.array([landmarks[5]['x'], landmarks[5]['y']]),
+                "right_eye_outer": np.array([landmarks[6]['x'], landmarks[6]['y']]),
+                "left_ear": np.array([landmarks[7]['x'], landmarks[7]['y']]),
+                "right_ear": np.array([landmarks[8]['x'], landmarks[8]['y']]),
+                "mouth_left": np.array([landmarks[9]['x'], landmarks[9]['y']]),
+                "mouth_right": np.array([landmarks[10]['x'], landmarks[10]['y']]),
+                "left_shoulder": np.array([landmarks[11]['x'], landmarks[11]['y']]),
+                "right_shoulder": np.array([landmarks[12]['x'], landmarks[12]['y']]),
+                "left_elbow": np.array([landmarks[13]['x'], landmarks[13]['y']]),
+                "right_elbow": np.array([landmarks[14]['x'], landmarks[14]['y']]),
+                "left_wrist": np.array([landmarks[15]['x'], landmarks[15]['y']]),
+                "right_wrist": np.array([landmarks[16]['x'], landmarks[16]['y']]),
+                "left_hip": np.array([landmarks[23]['x'], landmarks[23]['y']]),
+                "right_hip": np.array([landmarks[24]['x'], landmarks[24]['y']]),
+                "left_knee": np.array([landmarks[25]['x'], landmarks[25]['y']]),
+                "right_knee": np.array([landmarks[26]['x'], landmarks[26]['y']]),
+                "left_ankle": np.array([landmarks[27]['x'], landmarks[27]['y']]),
+                "right_ankle": np.array([landmarks[28]['x'], landmarks[28]['y']]),
+            }
+
             # Set all landmarks as correct initially
-            correct = [1] * len(landmarks.landmark)
+            correct = [1] * len(detected_pose)
             feedback = []
 
             # Check if the hands are touching the ankles
-            left_leg_hand_touch = calculate_distance(landmarks.landmark[16], landmarks.landmark[28]) < calculate_distance(landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER], landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP]) / 2
-            right_leg_hand_touch = calculate_distance(landmarks.landmark[15], landmarks.landmark[27]) < calculate_distance(landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER], landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP]) / 2
+            left_leg_hand_touch = calculate_distance(detected_pose["left_wrist"], detected_pose["left_ankle"]) < calculate_distance(detected_pose["left_shoulder"], detected_pose["left_hip"]) / 2
+            right_leg_hand_touch = calculate_distance(detected_pose["right_wrist"], detected_pose["right_ankle"]) < calculate_distance(detected_pose["right_shoulder"], detected_pose["right_hip"]) / 2
 
             # If hips are not above the nose, mark as incorrect
-            if landmarks.landmark[24].y > landmarks.landmark[0].y:
-                correct[24] = 0
-                feedback.append("Hips should be raised above the nose.")
-
-            if landmarks.landmark[23].y > landmarks.landmark[0].y:
+            if detected_pose["left_hip"][1] <= detected_pose["nose"][1]:
                 correct[23] = 0
-                feedback.append("Hips should be raised above the nose.")
+                feedback.append("Left hip should be raised above the nose.")
+
+            if detected_pose["right_hip"][1] <= detected_pose["nose"][1]:
+                correct[24] = 0
+                feedback.append("Right hip should be raised above the nose.")
 
             # If shoulders are below hips, mark as incorrect
-            if landmarks.landmark[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y < landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP.value].y:
-                correct[mp_pose.PoseLandmark.LEFT_SHOULDER.value] = 0
-                feedback.append("Shoulders should be above the hips.")
+            if detected_pose["left_shoulder"][1] < detected_pose["left_hip"][1]:
+                correct[11] = 0
+                feedback.append("Left shoulder should be above the left hip.")
 
-            if landmarks.landmark[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y < landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP.value].y:
-                correct[mp_pose.PoseLandmark.RIGHT_SHOULDER.value] = 0
-                feedback.append("Shoulders should be above the hips.")
+            if detected_pose["right_shoulder"][1] < detected_pose["right_hip"][1]:
+                correct[12] = 0
+                feedback.append("Right shoulder should be above the right hip.")
 
             # If hands are not touching ankles, mark hands and ankles as incorrect
             if not left_leg_hand_touch:
-                correct[mp_pose.PoseLandmark.LEFT_WRIST.value] = 0
-                correct[mp_pose.PoseLandmark.LEFT_ANKLE.value] = 0
+                correct[15] = 0
+                correct[27] = 0
                 feedback.append("Left hand should be touching the left ankle.")
 
             if not right_leg_hand_touch:
-                correct[mp_pose.PoseLandmark.RIGHT_WRIST.value] = 0
-                correct[mp_pose.PoseLandmark.RIGHT_ANKLE.value] = 0
+                correct[16] = 0
+                correct[28] = 0
                 feedback.append("Right hand should be touching the right ankle.")
 
             # Calculate final accuracy based on correct landmarks
@@ -73,5 +96,3 @@ def detect_pose(landmarks):
     except Exception as e:
         print(f"Error during pose detection: {e}")
         return 0.0, "Error", "An error occurred during pose detection."
-
-
