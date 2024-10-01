@@ -1,11 +1,8 @@
 import numpy as np
 import mediapipe as mp
-import math
+from .utils import calculate_angle, calculate_distance
 
 mp_pose = mp.solutions.pose
-
-def calculate_distance(p1, p2):
-    return np.linalg.norm(np.array(p1) - np.array(p2))
 
 def detect_pose(landmarks):
     try:

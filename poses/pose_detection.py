@@ -1,27 +1,26 @@
-# poses/pose_detection.py
-
-from .parvatasana import detect_parvatasana
-from .AnandaBalasana import detect_pose as detect_ananda_balasan
-from .ArdhaChakrasana import detect_pose as detect_ardha_chakrasana
-from .ArdhaPadmasana import detect_pose as detect_ardha_padmasana
-from .Bhujangasana import detect_pose as detect_bhujangasana
-from .Hastauttanasana import detect_pose as detect_hastauttanasana
-from .navasana import detect_pose as detect_navasana
-from .Phalakasana import detect_pose as detect_phalakasana
-from .Paschimottanasana import detect_pose as detect_paschimottanasana
-from .Pranamasana import detect_pose as detect_pranamasana
-from .purvamatsyasana import detect_pose as detect_purvamatsyasana
-from .savasana import detect_pose as detect_savasana
-from .setubandasana import detect_pose as detect_setubandasana
-from .Supta_Baddha_Konasana import detect_pose as detect_supta_baddha_konasana
-from .SuptaMatsyendrasana import detect_pose as detect_supta_matsyendrasana
-from .svanasana import detect_pose as detect_svanasana
-from .Utkatasana import detect_pose as detect_utkatasana
-from .Uttanasana import detect_pose as detect_uttanasana
-from .ViparitaKarani import detect_pose as detect_viparita_karani
-from .vajrasana import detect_pose as detect_vajrasana
-from .Virabhadrasana_I import detect_pose as detect_virabhadrasana_I
-from .Virabhadrasana_II import detect_pose as detect_virabhadrasana_II
+# poses/asans/pose_detection.py
+from .asans.parvatasana import detect_parvatasana
+from .asans.AnandaBalasana import detect_pose as detect_ananda_balasan
+from .asans.ArdhaChakrasana import detect_pose as detect_ardha_chakrasana
+from .asans.ArdhaPadmasana import detect_pose as detect_ardha_padmasana
+from .asans.Bhujangasana import detect_pose as detect_bhujangasana
+from .asans.Hastauttanasana import detect_pose as detect_hastauttanasana
+from .asans.navasana import detect_pose as detect_navasana
+from .asans.Phalakasana import detect_pose as detect_phalakasana
+from .asans.Paschimottanasana import detect_pose as detect_paschimottanasana
+from .asans.Pranamasana import detect_pose as detect_pranamasana
+from .asans.purvamatsyasana import detect_pose as detect_purvamatsyasana
+from .asans.savasana import detect_pose as detect_savasana
+from .asans.setubandasana import detect_pose as detect_setubandasana
+from .asans.Supta_Baddha_Konasana import detect_pose as detect_supta_baddha_konasana
+from .asans.SuptaMatsyendrasana import detect_pose as detect_supta_matsyendrasana
+from .asans.svanasana import detect_pose as detect_svanasana
+from .asans.Utkatasana import detect_pose as detect_utkatasana
+from .asans.Uttanasana import detect_pose as detect_uttanasana
+from .asans.ViparitaKarani import detect_pose as detect_viparita_karani
+from .asans.vajrasana import detect_pose as detect_vajrasana
+from .asans.Virabhadrasana_I import detect_pose as detect_virabhadrasana_I
+from .asans.Virabhadrasana_II import detect_pose as detect_virabhadrasana_II
 # from .another_pose import detect_another_pose   # Add other poses here
 
 class PoseDetection:

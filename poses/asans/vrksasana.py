@@ -1,10 +1,8 @@
-import cv2
 import mediapipe as mp
 import numpy as np
-import math
+from .utils import calculate_angle, calculate_distance
 
 # Initialize MediaPipe Pose
-mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
 # Define reference landmarks for Vrksasana (Tree Pose)
@@ -17,50 +15,6 @@ reference_pose = {
     "right_hip": np.array([0.5, 0.7]),
 }
 
-def calculate_angle(point1, point2, point3):
-    # Calculate vectors
-    vec1 = [point1[0] - point2[0], point1[1] - point2[1]]
-    vec2 = [point3[0] - point2[0], point3[1] - point2[1]]
-    
-    # Calculate dot product
-    dot_product = vec1[0] * vec2[0] + vec1[1] * vec2[1]
-    
-    # Calculate magnitudes
-    mag1 = math.sqrt(vec1[0]**2 + vec1[1]**2)
-    mag2 = math.sqrt(vec2[0]**2 + vec2[1]**2)
-    
-    # Handle division by zero
-    if mag1 == 0 or mag2 == 0:
-        return 0.0
-    
-    # Calculate angle in radians
-    radians = math.acos(dot_product / (mag1 * mag2))
-    
-    # Convert radians to degrees
-    angle = math.degrees(radians)
-    
-    return angle
-
-# Function to calculate the distance between two points
-def calculate_distance(p1, p2):
-    return np.linalg.norm(np.array(p1) - np.array(p2))
-
-# Function to draw landmarks and connections on the image
-def draw_landmarks(image, landmarks, correct):
-    h, w, _ = image.shape
-    for idx, landmark in enumerate(landmarks.landmark):
-        color = (0, 255, 0) if correct[idx] == 1 else (0, 0, 255)
-        cx, cy = int(landmark.x * w), int(landmark.y * h)
-        cv2.circle(image, (cx, cy), 5, color, -1)
-    
-    for connection in mp_pose.POSE_CONNECTIONS:
-        start_idx, end_idx = connection
-        start_point = landmarks.landmark[start_idx]
-        end_point = landmarks.landmark[end_idx]
-        color = (0, 255, 0) if correct[start_idx] == 1 and correct[end_idx] == 1 else (0, 0, 255)
-        start = (int(start_point.x * w), int(start_point.y * h))
-        end = (int(end_point.x * w), int(end_point.y * h))
-        cv2.line(image, start, end, color, 2)
 
 def calculate_arm_angle(landmarks, side):
     if side == "left":
@@ -146,35 +100,3 @@ def detect_pose(landmarks):
     except Exception as e:
         print(f"Error during pose detection: {e}")
         return None, 0.0, [0] * len(landmarks.landmark), "Error"
-
-# Main function to capture video and detect pose
-def main():
-    cap = cv2.VideoCapture(0)  # Use 0 for the default webcam
-    with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                print("Ignoring empty camera frame.")
-                continue
-
-            # Convert the BGR image to RGB and process it with MediaPipe Pose
-            image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = pose.process(image_rgb)
-
-            if results.pose_landmarks:
-                accuracy, pose_name, correct, feedback_str = detect_pose(results.pose_landmarks)
-                draw_landmarks(frame, results.pose_landmarks, correct)
-                cv2.putText(frame, f'Pose: {pose_name}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(frame, f'Accuracy: {accuracy:.2f}%', (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(frame, f'Feedback: {feedback_str}', (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
-
-            cv2.imshow('Pose Detection', frame)
-
-            if cv2.waitKey(5) & 0xFF == 27:
-                break
-
-    cap.release()
-    cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    main()

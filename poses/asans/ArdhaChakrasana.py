@@ -1,52 +1,11 @@
-import cv2
 import mediapipe as mp
 import numpy as np
-import math
+from .utils import calculate_angle, calculate_distance
+
 
 # Initialize MediaPipe Pose
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
-
-# Function to calculate the distance between two points
-def calculate_distance(p1, p2):
-    return np.linalg.norm(np.array(p1) - np.array(p2))
-
-def calculate_angle(point1, point2, point3):
-    # Calculate vectors
-    vec1 = [point1[0] - point2[0], point1[1] - point2[1]]
-    vec2 = [point3[0] - point2[0], point3[1] - point2[1]]
-    
-    # Calculate dot product
-    dot_product = vec1[0] * vec2[0] + vec1[1] * vec2[1]
-    
-    # Calculate magnitudes
-    mag1 = math.sqrt(vec1[0]**2 + vec1[1]**2)
-    mag2 = math.sqrt(vec2[0]**2 + vec2[1]**2)
-    
-    # Calculate angle in radians
-    radians = math.acos(dot_product / (mag1 * mag2))
-    
-    # Convert radians to degrees
-    angle = math.degrees(radians)
-    
-    return angle
-
-# Function to draw landmarks and connections on the image
-def draw_landmarks(image, landmarks, correct):
-    h, w, _ = image.shape
-    for idx, landmark in enumerate(landmarks.landmark):
-        color = (0, 255, 0) if correct[idx] == 1 else (0, 0, 255)
-        cx, cy = int(landmark.x * w), int(landmark.y * h)
-        cv2.circle(image, (cx, cy), 5, color, -1)
-    
-    for connection in mp_pose.POSE_CONNECTIONS:
-        start_idx, end_idx = connection
-        start_point = landmarks.landmark[start_idx]
-        end_point = landmarks.landmark[end_idx]
-        color = (0, 255, 0) if correct[start_idx] == 1 and correct[end_idx] == 1 else (0, 0, 255)
-        start = (int(start_point.x * w), int(start_point.y * h))
-        end = (int(end_point.x * w), int(end_point.y * h))
-        cv2.line(image, start, end, color, 2)
 
 # Define reference landmarks for the desired pose
 reference_pose = {
