@@ -23,15 +23,16 @@ async function startPoseDetection() {
 
     // Set a callback function to process the results
     poseDetection.setResultCallback((result, canvasWidth, canvasHeight) => {
+        // Capture the instruction (e.g., "parvatasana")
+        const instructions = document.getElementById('asana-select').value;
         poseResult = result; // Store the latest pose result
         if (poseResult) {
             // Emit the latest pose data to the WebSocket server
-            socket.emit('poseData', { pose_landmarks: poseResult.landmarks , instructions });
+            socket.emit('poseData', { pose_landmarks: poseResult.landmarks, instructions });
         }
     });
 
-    // Capture the instruction (e.g., "parvatasana")
-    const instructions = document.getElementById('asana-select').value;
+
 
     socket.on('poseFeedback', (data) => { handleDetection(data); });
 

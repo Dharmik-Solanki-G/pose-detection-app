@@ -39,6 +39,7 @@ def disconnect(sid):
 def poseData(sid, data):
     instructions = data.get('instructions', None)  # Extract instructions
     landmarks = data.get('pose_landmarks', None)
+    print(instructions)
 
     # Check if landmarks are provided
     if landmarks:

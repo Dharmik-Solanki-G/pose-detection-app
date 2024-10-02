@@ -82,7 +82,7 @@ class PoseDetection extends Detection {
         if (this.webcamRunning === true) {
             setTimeout(() => {
                 window.requestAnimationFrame(this.onDetection.bind(this));
-            }, 50);
+            }, 100);
         }
 
     }
