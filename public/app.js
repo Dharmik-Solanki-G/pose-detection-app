@@ -1,7 +1,7 @@
 import PoseDetection from './poseDetection.js';
 
 // Connect to the WebSocket server
-const socket = io('http://localhost:5000'); // Make sure to match your server address
+const socket = io('/'); // Make sure to match your server address
 
 // Function to start the webcam
 async function setupWebcam() {
