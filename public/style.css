@@ -29,6 +29,7 @@ body {
     width: 100%;
     height: auto;
     display: block;
+    transform: scaleX(-1);
 }
 
 /* Local Canvas Element */
@@ -40,6 +41,7 @@ body {
     height: 100%; /* Full height to match video */
     pointer-events: none; /* Disable interaction with the canvas */
     z-index: 10; /* Lower z-index to ensure it’s behind the feedback canvas */
+    transform: scaleX(-1); /* Flip horizontally to match the video */
 }
 
 /* Feedback Canvas */
