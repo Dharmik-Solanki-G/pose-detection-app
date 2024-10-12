@@ -1,4 +1,4 @@
-from utils import convert_landmarks_to_dict,calculate_joint_angles, classify_orientation, load_angles_from_csv
+from .utils import convert_landmarks_to_dict,calculate_joint_angles, classify_orientation, load_angles_from_csv
 
 # Function to detect pose and validate angles.
 def detect_pose(landmarks):
